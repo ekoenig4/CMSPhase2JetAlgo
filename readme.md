@@ -8,8 +8,12 @@ This project uses APxL1TAlgoDev from Ales Svetek (https://github.com/APxL1TAlgoD
 source /data/tools/Xilinx/Vivado/2018.2/settings64.sh (/opt/Xilinx/Vivado/2018.2/settings64.sh - on UW Madison machine)
 source /data/setup_xilinx_lic.sh
 
-mkdir -p /data/$USER/CMSPhase2HLS  (/scratch/$USER/CMSPhase2HLS on UW Madison machine)
-cd /data/$USER/CMSPhase2HLS
+## CMSSW enviroment used for plotting software
+cmsrel CMSSW_10_2_10
+cd CMSSW_10_2_10/src/
+cmsenv
+mkdir -p CMSPhase2HLS
+cd CMSPhase2HLS
 
 git lfs install
 git version
@@ -30,7 +34,7 @@ vivado_hls -f run_hls.tcl #more parameters in section below
 
 ## STEP-2: Running JetAlgo Project
 ```
-cd /data/$USER/CMSPhase2HLS/APx_Gen0_Algo/VivadoHls
+cd $CMSSW_BASE/src/CMSPhase2HLS/APx_Gen0_Algo/VivadoHls
 git clone https://github.com/ekoenig4/CMSPhase2JetAlgo.git
 cd CMSPhase2JetAlgo/vivado_hls
 vivado_hls -f run_hls.tcl synth=0 csim=1 cosim=0 export=0 tv=jetalgo_tv_0
