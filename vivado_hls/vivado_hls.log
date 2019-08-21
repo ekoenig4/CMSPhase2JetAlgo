@@ -1,0 +1,52 @@
+
+****** Vivado(TM) HLS - High-Level Synthesis from C, C++ and SystemC v2018.2 (64-bit)
+  **** SW Build 2258646 on Thu Jun 14 20:02:38 MDT 2018
+  **** IP Build 2256618 on Thu Jun 14 22:10:49 MDT 2018
+    ** Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
+
+source /afs/hep.wisc.edu/cms/sw/Xilinx/Vivado/2018.2/scripts/vivado_hls/hls.tcl -notrace
+INFO: [HLS 200-10] Running '/afs/hep.wisc.edu/cms/sw/Xilinx/Vivado/2018.2/bin/unwrapped/lnx64.o/vivado_hls'
+INFO: [HLS 200-10] For user 'ekoenig4' on host 'login06.hep.wisc.edu' (Linux_x86_64 version 4.4.184-1.el7.elrepo.x86_64) on Wed Aug 21 08:17:18 CDT 2019
+INFO: [HLS 200-10] On os "CentOS Linux release 7.6.1810 (Core) "
+INFO: [HLS 200-10] In directory '/nfs_scratch/ekoenig4/Trigger/CMSSW_10_2_10/src/CMSPhase2HLS/APx_Gen0_Algo/VivadoHls/CMSPhase2JetAlgo/vivado_hls'
+INFO: [HLS 200-10] Opening and resetting project '/nfs_scratch/ekoenig4/Trigger/CMSSW_10_2_10/src/CMSPhase2HLS/APx_Gen0_Algo/VivadoHls/CMSPhase2JetAlgo/vivado_hls/proj'.
+INFO: [HLS 200-10] Adding design file 'src/algo_unpacked.cpp' to the project
+INFO: [HLS 200-10] Adding design file 'src/JetFinder.cpp' to the project
+INFO: [HLS 200-10] Adding design file 'src/QuickSort.cpp' to the project
+INFO: [HLS 200-10] Adding test bench file 'src/algo_unpacked_tb.cpp' to the project
+INFO: [HLS 200-10] Adding test bench file 'data/jetalgo_tv_0_inp.txt' to the project
+INFO: [HLS 200-10] Adding test bench file 'data/jetalgo_tv_1_inp.txt' to the project
+INFO: [HLS 200-10] Adding test bench file 'data/jetalgo_tv_2_inp.txt' to the project
+INFO: [HLS 200-10] Adding test bench file 'data/jetalgo_tv_3_inp.txt' to the project
+INFO: [HLS 200-10] Adding test bench file 'data/jetalgo_tv_4_inp.txt' to the project
+INFO: [HLS 200-10] Opening and resetting solution '/nfs_scratch/ekoenig4/Trigger/CMSSW_10_2_10/src/CMSPhase2HLS/APx_Gen0_Algo/VivadoHls/CMSPhase2JetAlgo/vivado_hls/proj/solution1'.
+INFO: [HLS 200-10] Cleaning up the solution database.
+INFO: [HLS 200-10] Setting target device to 'xc7vx690tffg1927-2'
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 8.33333ns.
+***** C SIMULATION *****
+INFO: [SIM 211-2] *************** CSIM start ***************
+INFO: [SIM 211-4] CSIM will launch GCC as the compiler.
+   Compiling ../../../../src/algo_unpacked_tb.cpp in debug mode
+   Compiling ../../../../src/QuickSort.cpp in debug mode
+   Compiling ../../../../src/JetFinder.cpp in debug mode
+   Compiling ../../../../src/algo_unpacked.cpp in debug mode
+   Generating csim.exe
+Starting Test Bench
+Filling link_in with input data
+Found Jet 0 with Et = 56 * 0.25 GeV
+Found Jet 1 with Et = 43 * 0.25 GeV
+Found Jet 2 with Et = 31 * 0.25 GeV
+Found Jet 3 with Et = 30 * 0.25 GeV
+Found Jet 4 with Et = 22 * 0.25 GeV
+Found Jet 5 with Et = 15 * 0.25 GeV
+Found Jet 6 with Et = 15 * 0.25 GeV
+Found Jet 7 with Et = 9 * 0.25 GeV
+Found Jet 8 with Et = 8 * 0.25 GeV
+Found Jet 9 with Et = 7 * 0.25 GeV
+Found Jet 10 with Et = 5 * 0.25 GeV
+Found Jet 11 with Et = 2 * 0.25 GeV
+Found Jet 12 with Et = 2 * 0.25 GeV
+INFO: [SIM 211-1] CSim done with 0 errors.
+INFO: [SIM 211-3] *************** CSIM finish ***************
+***** C SIMULATION COMPLETED IN 0h0m10s *****
+INFO: [Common 17-206] Exiting vivado_hls at Wed Aug 21 08:17:30 2019...

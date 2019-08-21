@@ -1,0 +1,13 @@
+
+****** Vivado(TM) HLS - High-Level Synthesis from C, C++ and SystemC v2018.2 (64-bit)
+  **** SW Build 2258646 on Thu Jun 14 20:02:38 MDT 2018
+  **** IP Build 2256618 on Thu Jun 14 22:10:49 MDT 2018
+    ** Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
+
+source /afs/hep.wisc.edu/cms/sw/Xilinx/Vivado/2018.2/scripts/vivado_hls/hls.tcl -notrace
+INFO: [HLS 200-10] Running '/afs/hep.wisc.edu/cms/sw/Xilinx/Vivado/2018.2/bin/unwrapped/lnx64.o/vivado_hls'
+INFO: [HLS 200-10] For user 'ekoenig4' on host 'login04.hep.wisc.edu' (Linux_x86_64 version 4.4.188-1.el7.elrepo.x86_64) on Tue Aug 20 09:08:02 CDT 2019
+INFO: [HLS 200-10] On os "CentOS Linux release 7.6.1810 (Core) "
+INFO: [HLS 200-10] In directory '/nfs_scratch/ekoenig4/Trigger/CMSSW_10_2_10/src/CMSPhase2HLS/APx_Gen0_Algo/VivadoHls/CMSPhase2JetAlgo'
+ERROR: [HLS 200-70] Directory 'vivado_hls/' is not a Vivado HLS project.
+INFO: [Common 17-206] Exiting vivado_hls at Tue Aug 20 09:08:02 2019...
