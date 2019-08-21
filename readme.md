@@ -2,7 +2,7 @@
 
 This project uses APxL1TAlgoDev from Ales Svetek (https://github.com/APxL1TAlgoDev)
 
-#STEP-1: Vivado HLS
+# STEP-1: Vivado HLS
 ```
 ## Set up Xilinx env and licensing (uwlogin.cern.ch specific)
 source /data/tools/Xilinx/Vivado/2018.2/settings64.sh (/opt/Xilinx/Vivado/2018.2/settings64.sh - on UW Madison machine)
@@ -28,7 +28,7 @@ cd null_algo_unpacked/vivado_hls #Currently using null_algo_unpacked, make chang
 vivado_hls -f run_hls.tcl #more parameters in section below
 ```
 
-#STEP-2: Running JetAlgo Project
+# STEP-2: Running JetAlgo Project
 ```
 cd /data/$USER/CMSPhase2HLS/APx_Gen0_Algo/VivadoHls
 git clone https://github.com/ekoenig4/CMSPhase2JetAlgo.git
