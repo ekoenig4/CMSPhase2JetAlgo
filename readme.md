@@ -1,8 +1,8 @@
-## CMS Phase 2 Jet Algorithm
+# CMS Phase 2 Jet Algorithm
 
 This project uses APxL1TAlgoDev from Ales Svetek (https://github.com/APxL1TAlgoDev)
 
-# STEP-1: Vivado HLS
+## STEP-1: Vivado HLS
 ```
 ## Set up Xilinx env and licensing (uwlogin.cern.ch specific)
 source /data/tools/Xilinx/Vivado/2018.2/settings64.sh (/opt/Xilinx/Vivado/2018.2/settings64.sh - on UW Madison machine)
@@ -28,7 +28,7 @@ cd null_algo_unpacked/vivado_hls #Currently using null_algo_unpacked, make chang
 vivado_hls -f run_hls.tcl #more parameters in section below
 ```
 
-# STEP-2: Running JetAlgo Project
+## STEP-2: Running JetAlgo Project
 ```
 cd /data/$USER/CMSPhase2HLS/APx_Gen0_Algo/VivadoHls
 git clone https://github.com/ekoenig4/CMSPhase2JetAlgo.git
@@ -36,7 +36,7 @@ cd CMSPhase2JetAlgo/vivado_hls
 vivado_hls -f run_hls.tcl synth=0 csim=1 cosim=0 export=0 tv=jetalgo_tv_0
 ```
 
-## Vivado_hls command:
+# Vivado_hls command:
 Internally, the “run_hls.tcl” script uses 5 parameters that steer the build process:
 ```
 synth: 1 (run) OR 0 (skip): do C synthesis
