@@ -1,6 +1,16 @@
 #ifndef JET_HH
 #define JET_HH
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <unistd.h>
+
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <string>
+#include <bitset>
 #include "Tower3x3.hh"
 #include <stdio.h>
 
@@ -15,8 +25,7 @@ class Jet {
   int ecal_et;
   int highest_ecal_et;
   
-  Jet(int index) {
-    this->index = index;
+  Jet() {
     seed.ieta = 0;
     seed.iphi = 0;
     seed.et = 0;

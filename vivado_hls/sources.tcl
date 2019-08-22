@@ -10,8 +10,7 @@ add_files src/QuickSort.cpp
 add_files -tb src/algo_unpacked_tb.cpp 
 
 ### Add test input files
-add_files -tb data/jetalgo_tv_0_inp.txt
-add_files -tb data/jetalgo_tv_1_inp.txt
-add_files -tb data/jetalgo_tv_2_inp.txt
-add_files -tb data/jetalgo_tv_3_inp.txt
-add_files -tb data/jetalgo_tv_4_inp.txt
+add_files -tb data/jetalgo_tv_0_0_inp.txt
+add_files -tb data/jetalgo_tv_0_1_inp.txt
+add_files -tb data/jetalgo_tv_0_2_inp.txt
+

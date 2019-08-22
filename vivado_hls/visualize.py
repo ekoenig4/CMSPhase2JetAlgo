@@ -18,10 +18,18 @@ for input in tv.data:
     x_list = [];
     y_list = [];
     weights = [];
-    
-    for id,et in enumerate(input['towers']):
-        if et == 0: continue
-        iphi,ieta = getTowerPos(id)
+
+    if 'jets' in input:   type = 'jets'
+    if 'towers' in input: type = 'towers'
+    for id,info in enumerate(input[type]):
+        if info == 0: continue
+        if type == 'towers':
+            iphi,ieta = getTowerPos(id)
+            et = info * 0.25
+        if type == 'jets':
+            iphi = info['phi']
+            ieta = info['eta']
+            et = info['et'] * 0.25
         x_list.append(iphi - 0.5)
         y_list.append(ieta - 0.5)
         weights.append(et)
@@ -45,9 +53,11 @@ for input in tv.data:
     #c.cd();
         
     gct = TH2F("tv",';#phi;#eta',maxPhi,0,maxPhi,maxEta,0,maxEta)
-    for i,weight in enumerate(weights): gct.Fill(x_list[i],y_list[i],weight)
+    for x,y,w in zip(x_list,y_list,weights): gct.Fill(x,y,w)
 
     gct.Draw("COLZ TEXT")
+    gct.GetZaxis().SetTitle('E_{T} GeV')
+    gct.GetZaxis().CenterTitle()
     gct.GetXaxis().SetTitleOffset(0.5)
     gct.GetXaxis().SetNdivisions(maxPhi/5)
     gct.GetXaxis().SetLabelOffset(999)
@@ -72,6 +82,16 @@ for input in tv.data:
         if y%17 == 0: lines[-1].SetLineStyle(0)
         else: lines[-1].SetLineStyle(3)
         lines[-1].Draw()
+    if type == 'jets':
+        boxes = []
+        for (phi,eta) in zip(x_list,y_list):
+            phi += 0.5; eta += 0.5
+            box = TBox(phi - 5,eta - 5,phi + 4,eta + 4)
+            box.SetFillStyle(0)
+            box.SetLineColor(kRed)
+            box.SetLineWidth(2)
+            box.Draw('same')
+            boxes.append(box)
 
     label="JetAlgo"
     outdir = '~/public_html/Trigger/'+label+'/HLS_Plots/'

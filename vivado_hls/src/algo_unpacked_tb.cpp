@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iomanip>
 #include <string>
+#include <bitset>
 
 #include "../../../../../APx_Gen0_Algo/VivadoHls/null_algo_unpacked/vivado_hls/src/algo_unpacked.h"
 //#include "algo_unpacked.h"
@@ -60,6 +61,10 @@ int main(int argc, char ** argv) {
   }
 
   algo_unpacked(link_in,link_out);
+
+  for (int link = 0; link < N_CH_OUT; link++) {
+    ofs << bitset<192>(link_out[link]) << std::endl;
+  }
   
 }
 

@@ -34,14 +34,10 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 #pragma HLS PIPELINE II=3
 #pragma HLS INTERFACE ap_ctrl_hs port=return
 
-  if (DEBUG) cout << "Initilizing Tower3x3 Array" << endl;
   // Initialize Arrays
-  for (int i = 0; i < M_3x3; i++)
-    tower3x3s[i] = new Tower3x3(i);
-  if (DEBUG) cout << "Initilizing Jet Array" << endl;
+  for (int i = 0; i < M_3x3; i++) tower3x3s[i] = new Tower3x3(i);
+  for (int i = 0; i < M_JET; i++) jets[i] = 0;
   njets = 0;
-  for (int i = 0; i < M_JET; i++)
-    jets[i] = new Jet(i);
 
   // null algo specific pragma: avoid fully combinatorial algo by specifying min latency
   // otherwise algorithm clock input (ap_clk) gets optimized away
@@ -50,7 +46,11 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
   get9x9SecondPass(tower3x3s,jets,njets);
   getOverlapThirdPass(tower3x3s,jets,njets);
   QuickSort(jets,njets);
+
   for (int i = 0; i < njets; i++) {
-    printf("Found Jet %i with Et = %i * 0.25 GeV\n",i,jets[i]->ecal_et);
+    Jet* jet = jets[i];
+    link_out[i].range(5,0) = ap_uint<6>(jet->seed.iphi);
+    link_out[i].range(11,6) = ap_uint<6>(jet->seed.ieta);
+    link_out[i].range(21,12) = ap_uint<10>(jet->ecal_et);
   }
 }

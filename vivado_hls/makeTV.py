@@ -33,38 +33,40 @@ def getTowerEt(i,event):
 
 input = args[-1]
 tvfile = TFile.Open(input)
+tvfile.cd('outputTV')
 
 output = 'jetalgo_tv_'
 
-events = [ tvfile.Get(key.GetName()) for key in tvfile.GetListOfKeys() ]
+events = [ tvfile.Get('outputTV/'+key.GetName()) for key in gDirectory.GetListOfKeys() ]
 for i,event in enumerate(events):
     if options.debug:
         gStyle.SetTextSize(0.04)
         calo = TH2D("debug","Calorimeter",72,0,72,34,0,34)
-    links = []; ntowers = []
-    link = ''; ntower = 0; total_towers = 0
-    for j in range(2448):
+    for section in range(3):
+      links = []; ntowers = []
+      link = ''; ntower = 0; total_towers = 0
+      for j in range(maxTowers):
         if total_towers == maxTowers: break
         if len(links) == nch: break
         et,tower_et,iphi,ieta = getTowerEt(j,event)
         link = et + link; ntower += 1; total_towers += 1
         if options.debug:
-            print getTowerEt(j,event),len(links),ntower,total_towers
-            calo.Fill(iphi-0.5,ieta-0.5,int(et,2))
+          print getTowerEt(j,event),len(links),ntower,total_towers
+          calo.Fill(iphi-0.5,ieta-0.5,int(et,2))
         if ntower == tpl:
-            link = link.zfill(bpl)
-            links.append(link)
-            ntowers.append(ntower)
-            link = ''; ntower = 0
-    while (len(links) != nch): links.append( ''.zfill(bpl) )
-    if options.debug:
+          link = link.zfill(bpl)
+          links.append(link)
+          ntowers.append(ntower)
+          link = ''; ntower = 0
+      while (len(links) != nch): links.append( ''.zfill(bpl) )
+      if options.debug:
         avg_towers = sum( ntowers )/len(links)
         print "num channels %i | num of towers per channel %i" % ( len(links),avg_towers  )
         calo.Draw("COL TEXT")
         h = raw_input("Press any key to continue. ")
         continue
-    with open('data/'+output+'%i_inp.txt' % i,'w') as out:
+      with open('data/'+output+'%i_%i_inp.txt' % (i,section),'w') as out:
         for link in links:
-            out.write(link+'\n')
+          out.write(link+'\n')
 ###############################################
     

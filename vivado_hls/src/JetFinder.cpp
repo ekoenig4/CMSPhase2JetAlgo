@@ -59,7 +59,8 @@ void get9x9SecondPass(Tower3x3* tower3x3s[M_3x3],Jet* jets[M_JET],int &njets) {
 #pragma HLS UNROLL
       int index = getTower3x3(iphi,ieta);
       Tower3x3* tower3x3 = tower3x3s[index];
-      auto& jet = jets[ njets ];
+      if (tower3x3->highest_ecal_et < M_ET) continue;
+      Jet* jet = new Jet();
       jet->setSeed(tower3x3);
       if (DEBUG_9x9) printf("Seeding Jet: (%i,%i,%i,%i)\n",jet->seed.iphi,jet->seed.ieta,jet->seed.et,jet->highest_ecal_et);
       bool valid = true;
@@ -76,6 +77,7 @@ void get9x9SecondPass(Tower3x3* tower3x3s[M_3x3],Jet* jets[M_JET],int &njets) {
       if (valid) {
 	if ( jet->ecal_et > 0 ) {
 	  if (DEBUG_9x9) printf("Clustering Jet: (%i,%i,%i,%i)\n\n",jet->seed.iphi,jet->seed.ieta,jet->ecal_et,jet->highest_ecal_et);
+	  jets[njets] = jet;
 	  njets++;
 	}
       }
@@ -84,12 +86,14 @@ void get9x9SecondPass(Tower3x3* tower3x3s[M_3x3],Jet* jets[M_JET],int &njets) {
   if (DEBUG_9x9) printf("Finishing 9x9 Second Pass | %i Total Jets Found\n",njets);
 }
 
-void getOverlapThirdPass(Tower3x3* tower3x3s[M_3x3],Jet* jets[M_JET],int njets) {
+void getOverlapThirdPass(Tower3x3* tower3x3s[M_3x3],Jet* jets[M_JET],int &njets) {
   if (DEBUG_Ovl) printf("Starting Overlap Third Pass | %i Total Jets\n",njets);
-  for (int ijet = 0; ijet < njets; ijet++) {
+  for (int i = 0; i < njets; i++) {
 #pragma HLS UNROLL
 
-    auto& jet = jets[ijet];
+    auto jet = jets[i];
+    if ( jet == 0 ) continue;
+    
     if (DEBUG_Ovl) printf("Checking Jet: (%i,%i,%i)\n",jet->seed.iphi,jet->seed.ieta,jet->ecal_et);
     for (int r = 0; r < 8; r++) {
 #pragma HLS UNROLL
