@@ -9,8 +9,16 @@ def JetAlgoparseINP(input,data):
     tpl = 18 # Number of towers per link
     etunit = 0.25 # GeV
     fname = input.replace('data/','')
-    with open(input,'r') as f: links = [ link.replace('\n','') for link in f.readlines() ]
-
+    links = []
+    with open(input,'r') as f:
+        # Take only the first 3 lines of each link
+        text = f.readlines()[3:6]
+        for i,line in enumerate(text):
+            if i > 2: break
+            bits = line.split()[1:]
+            for j,bit in enumerate(bits):
+                if i == 0: links.append('')
+                links[j] = bin( int(bit,16) )[2:].zfill(64) + links[j]
     # Create tower Et list 
     towers = []
     for link in links:
@@ -37,7 +45,16 @@ def JetAlgoparseOUT(input,data):
     tpl = 18 # Number of towers per link
     etunit = 0.25 # GeV
     fname = input.replace('data/','')
-    with open(input,'r') as f: links = [ link.replace('\n','') for link in f.readlines() ]
+    links = []
+    with open(input,'r') as f:
+        # Take only the first 3 lines of each link
+        text = f.readlines()[3:6]
+        for i,line in enumerate(text):
+            if i > 2: break
+            bits = line.split()[1:]
+            for j,bit in enumerate(bits):
+                if i == 0: links.append('')
+                links[j] = bin( int(bit,16) )[2:].zfill(64) + links[j]
 
     # Create Jet list 
     jets = []

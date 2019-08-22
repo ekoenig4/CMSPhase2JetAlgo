@@ -31,6 +31,21 @@ def getTowerEt(i,event):
     et = event.GetBinContent(iphi,ieta)
     return storeEt(et),et,iphi,ieta
 
+def write(fname,links):
+      with open('data/'+fname,'w') as out:
+        out.write("=====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================\n")
+        out.write("WordCnt             LINK_00               LINK_01               LINK_02               LINK_03               LINK_04               LINK_05               LINK_06               LINK_07               LINK_08               LINK_09               LINK_10               LINK_11               LINK_12               LINK_13               LINK_14               LINK_15               LINK_16               LINK_17               LINK_18               LINK_19               LINK_20               LINK_21               LINK_22               LINK_23               LINK_24               LINK_25               LINK_26               LINK_27               LINK_28               LINK_29               LINK_30               LINK_31               LINK_32               LINK_33               LINK_34               LINK_35               LINK_36               LINK_37               LINK_38               LINK_39               LINK_40               LINK_41               LINK_42               LINK_43               LINK_44               LINK_45               LINK_46               LINK_47\n")
+        out.write("#BeginData\n")
+        for cyc in range(3):
+          num = str((hex(cyc))[2:].zfill(4))
+          out.write("0x%s   " % num )
+          for i,link in enumerate(links):
+            bitLo = len(link); bitHi = bitLo - 64
+            save = link[bitHi:bitLo]; links[i] = link[:bitHi]
+            num = str((hex( int(save,2) )).replace("L","")[2:].zfill(16))
+            out.write("0x%s    " % num )
+          out.write("\n")
+
 input = args[-1]
 tvfile = TFile.Open(input)
 tvfile.cd('outputTV')
@@ -65,8 +80,7 @@ for i,event in enumerate(events):
         calo.Draw("COL TEXT")
         h = raw_input("Press any key to continue. ")
         continue
-      with open('data/'+output+'%i_%i_inp.txt' % (i,section),'w') as out:
-        for link in links:
-          out.write(link+'\n')
+      write(output+'%i_%i_inp.txt' % (i,section),links)
+        
 ###############################################
     
