@@ -11,8 +11,8 @@ def getTowerPos(i):
     ieta = (i/4)%34 + 1
     return iphi,ieta
 
-maxEta = 34
-maxPhi = 24
+MAX_ETA = 34
+MAX_PHI = 24
 
 for input in tv.data:
     x_list = [];
@@ -33,15 +33,10 @@ for input in tv.data:
         x_list.append(iphi - 0.5)
         y_list.append(ieta - 0.5)
         weights.append(et)
-
-    area = 1000000
-    # a = xy; r = x/y
-    # a*r = x^2;
-    # x = sqrt(a*r)
-    # y = sqrt(a/r)
-    
-    width = int((area*maxPhi/float(maxEta))**0.5)
-    height = int((area*maxEta/float(maxPhi))**0.5)
+    ########################################
+    r = 800
+    width  = int(1.2*MAX_PHI*(r**0.5))
+    height = int(MAX_ETA*(r**0.5))
         
     c = TCanvas("c", "canvas",width,height);
     gStyle.SetOptStat(0);
@@ -52,33 +47,33 @@ for input in tv.data:
     #c.SetLogy();
     #c.cd();
         
-    gct = TH2F("tv",';#phi;#eta',maxPhi,0,maxPhi,maxEta,0,maxEta)
+    gct = TH2F("tv",';#phi;#eta',MAX_PHI,0,MAX_PHI,MAX_ETA,0,MAX_ETA)
     for x,y,w in zip(x_list,y_list,weights): gct.Fill(x,y,w)
 
     gct.Draw("COLZ TEXT")
-    gct.GetZaxis().SetTitle('E_{T} GeV')
+    gct.GetZaxis().SetTitle('E_{T} (GeV)')
     gct.GetZaxis().CenterTitle()
     gct.GetXaxis().SetTitleOffset(0.5)
-    gct.GetXaxis().SetNdivisions(maxPhi/5)
+    gct.GetXaxis().SetNdivisions(MAX_PHI/5)
     gct.GetXaxis().SetLabelOffset(999)
-    gct.GetYaxis().SetNdivisions(maxEta/10)
+    gct.GetYaxis().SetNdivisions(MAX_ETA/10)
     gct.GetYaxis().SetLabelOffset(999)
         
     lines = []
     axis = []
-    for x in range(0,maxPhi):
+    for x in range(0,MAX_PHI):
         axis.append(TLatex(x+0.3,-0.8,str(x+1)))
         axis[-1].SetTextSize(0.03)
         axis[-1].Draw()
-        lines.append(TLine(x,0,x,maxEta))
+        lines.append(TLine(x,0,x,MAX_ETA))
         if x%4 == 0: lines[-1].SetLineStyle(9)
         else: lines[-1].SetLineStyle(3)
         lines[-1].Draw()
-    for y in range(0,maxEta):
+    for y in range(0,MAX_ETA):
         axis.append(TLatex(-0.9,y+0.2,str(y+1)))
         axis[-1].SetTextSize(0.03)
         axis[-1].Draw()
-        lines.append(TLine(0,y,maxPhi,y))
+        lines.append(TLine(0,y,MAX_PHI,y))
         if y%17 == 0: lines[-1].SetLineStyle(0)
         else: lines[-1].SetLineStyle(3)
         lines[-1].Draw()
@@ -86,7 +81,11 @@ for input in tv.data:
         boxes = []
         for (phi,eta) in zip(x_list,y_list):
             phi += 0.5; eta += 0.5
-            box = TBox(phi - 5,eta - 5,phi + 4,eta + 4)
+            minPhi = phi - 5 if phi - 5 > 0 else 0
+            maxPhi = phi + 4 if phi + 4 < 24 else 24
+            minEta = eta - 5 if eta - 5 > 0 else 0
+            maxEta = eta + 4 if eta + 4 < 34 else 34
+            box = TBox(minPhi,minEta,maxPhi,maxEta)
             box.SetFillStyle(0)
             box.SetLineColor(kRed)
             box.SetLineWidth(2)

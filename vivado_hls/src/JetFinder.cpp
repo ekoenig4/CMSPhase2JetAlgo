@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <bitset>
-using namespace std;
 
 int getTowerEt(int iphi,int ieta,ap_uint<192> link_in[N_CH_IN]) {
   int index = 136*( (iphi-1)/4 ) + (iphi-1)%4 + (ieta-1)*4;
@@ -10,7 +9,7 @@ int getTowerEt(int iphi,int ieta,ap_uint<192> link_in[N_CH_IN]) {
   int bitLo = 10*(index%18);
   int bitHi = bitLo + 10;
   ap_uint<192> link = link_in[channel]; 
-  ap_uint<10> u_et = link.range(bitHi,bitLo);
+  ap_uint<10> u_et(link.range(bitHi,bitLo));
   int et(u_et);
   return et;
 }
@@ -29,7 +28,7 @@ void get3x3FirstPass(ap_uint<192> link_in[N_CH_IN],Tower3x3* tower3x3s[M_3x3]) {
 #pragma HLS UNROLL
     for (int iphi = 2; iphi <= M_PHI; iphi += 3) {
 #pragma HLS UNROLL
-      auto& tower3x3 = tower3x3s[ntower3x3];
+      Tower3x3* tower3x3 = tower3x3s[ntower3x3];
       tower3x3->setSeed(iphi,ieta,getTowerEt(iphi,ieta,link_in));
       if (DEBUG_3x3) printf("Tower3x3: (%i,%i,%i)\n",tower3x3->iphi,tower3x3->ieta,tower3x3->ecal_et);
       for (int r = 0; r < 8; r++) {
@@ -62,21 +61,21 @@ void get9x9SecondPass(Tower3x3* tower3x3s[M_3x3],Jet* jets[M_JET],int &njets) {
       if (tower3x3->highest_ecal_et < M_ET) continue;
       Jet* jet = new Jet();
       jet->setSeed(tower3x3);
-      if (DEBUG_9x9) printf("Seeding Jet: (%i,%i,%i,%i)\n",jet->seed.iphi,jet->seed.ieta,jet->seed.et,jet->highest_ecal_et);
+      if (DEBUG_9x9) printf("Seeding Jet: (%i,%i,%i,%i)\n",jet->iphi,jet->ieta,jet->ecal_et,jet->highest_ecal_et);
       bool valid = true;
       for (int r = 0; r < 8; r++) {
 #pragma HLS UNROLL
       	int nphi = iphi + 3*RING_3x3[r][0];
       	int neta = ieta + 3*RING_3x3[r][1];
       	if ( (nphi <= 0 || nphi > M_PHI) || (neta <= 0 || neta > M_ETA) ) continue;
-	auto& tower3x3 = tower3x3s[ getTower3x3(nphi,neta) ];
+	Tower3x3* tower3x3 = tower3x3s[ getTower3x3(nphi,neta) ];
 	valid = jet->addCluster( tower3x3,RING_3x3[r][0],RING_3x3[r][1] );
 	if (DEBUG_9x9) printf("---Adding Tower: (%i,%i,%i,%i) | valid %i\n",tower3x3->iphi,tower3x3->ieta,tower3x3->ecal_et,tower3x3->highest_ecal_et,valid);
 	if (!valid) break;
       }
       if (valid) {
 	if ( jet->ecal_et > 0 ) {
-	  if (DEBUG_9x9) printf("Clustering Jet: (%i,%i,%i,%i)\n\n",jet->seed.iphi,jet->seed.ieta,jet->ecal_et,jet->highest_ecal_et);
+	  if (DEBUG_9x9) printf("Clustering Jet: (%i,%i,%i,%i)\n\n",jet->iphi,jet->ieta,jet->ecal_et,jet->highest_ecal_et);
 	  jets[njets] = jet;
 	  njets++;
 	}
@@ -91,14 +90,14 @@ void getOverlapThirdPass(Tower3x3* tower3x3s[M_3x3],Jet* jets[M_JET],int &njets)
   for (int i = 0; i < njets; i++) {
 #pragma HLS UNROLL
 
-    auto jet = jets[i];
-    if ( jet == 0 ) continue;
+    Jet* jet = jets[i];
+    if ( !jet->isSet ) continue;
     
-    if (DEBUG_Ovl) printf("Checking Jet: (%i,%i,%i)\n",jet->seed.iphi,jet->seed.ieta,jet->ecal_et);
+    if (DEBUG_Ovl) printf("Checking Jet: (%i,%i,%i)\n",jet->iphi,jet->ieta,jet->ecal_et);
     for (int r = 0; r < 8; r++) {
 #pragma HLS UNROLL
-      int nphi = jet->seed.iphi + 3*RING_3x3[r][0];
-      int neta = jet->seed.ieta + 3*RING_3x3[r][1];
+      int nphi = jet->iphi + 3*RING_3x3[r][0];
+      int neta = jet->ieta + 3*RING_3x3[r][1];
       if ( (nphi <= 0 || nphi > M_PHI) || (neta <= 0 || neta > M_ETA) ) continue;
       jet->checkOverlap( tower3x3s[ getTower3x3(nphi,neta) ] );
     }

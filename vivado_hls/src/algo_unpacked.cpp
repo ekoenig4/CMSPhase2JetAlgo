@@ -1,13 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-using namespace std;
-
 #include "../../../../../APx_Gen0_Algo/VivadoHls/null_algo_unpacked/vivado_hls/src/algo_unpacked.h"
 #include "Jet.hh"
 #include "Tower3x3.hh"
 #include "JetFinder.hh"
-#include "QuickSort.hh"
+// #include "QuickSort.hh"
 
 /*
  * algo_unpacked interface exposes fully unpacked input and output link data.
@@ -35,8 +33,16 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 #pragma HLS INTERFACE ap_ctrl_hs port=return
 
   // Initialize Arrays
-  for (int i = 0; i < M_3x3; i++) tower3x3s[i] = new Tower3x3(i);
-  for (int i = 0; i < M_JET; i++) jets[i] = 0;
+#pragma HLS ARRAY_PARTITION variable=tower3x3s complete dim=1
+  for (int i = 0; i < M_3x3; i++) {
+#pragma HLS UNROLL
+    tower3x3s[i] = new Tower3x3;
+  }
+#pragma HLS ARRAY_PARTITION variable=jets complete dim=1
+  for (int i = 0; i < M_JET; i++){
+#pragma HLS UNROLL
+    jets[i] = new Jet;
+  }
   njets = 0;
 
   // null algo specific pragma: avoid fully combinatorial algo by specifying min latency
@@ -45,12 +51,13 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
   get3x3FirstPass(link_in,tower3x3s);
   get9x9SecondPass(tower3x3s,jets,njets);
   getOverlapThirdPass(tower3x3s,jets,njets);
-  QuickSort(jets,njets);
+  // QuickSort(jets,njets);
 
   for (int i = 0; i < njets; i++) {
     Jet* jet = jets[i];
-    link_out[i].range(5,0) = ap_uint<6>(jet->seed.iphi);
-    link_out[i].range(11,6) = ap_uint<6>(jet->seed.ieta);
+    printf("Jet %i: (%i,%i,%i)\n",i+1,jet->iphi,jet->ieta,jet->ecal_et);
+    link_out[i].range(5,0) = ap_uint<6>(jet->iphi);
+    link_out[i].range(11,6) = ap_uint<6>(jet->ieta);
     link_out[i].range(21,12) = ap_uint<10>(jet->ecal_et);
   }
 }

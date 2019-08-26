@@ -2,3 +2,4 @@
 proj
 vivado_hls.log
 .nfs*
+*_csim_out.txt

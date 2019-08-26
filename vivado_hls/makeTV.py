@@ -57,14 +57,15 @@ for i,event in enumerate(events):
     if options.debug:
         gStyle.SetTextSize(0.04)
         calo = TH2D("debug","Calorimeter",72,0,72,34,0,34)
+    calo_towers = 0
     for section in range(3):
       links = []; ntowers = []
       link = ''; ntower = 0; total_towers = 0
-      for j in range(maxTowers):
+      for j in range(calo_towers,calo_towers+maxTowers):
         if total_towers == maxTowers: break
         if len(links) == nch: break
         et,tower_et,iphi,ieta = getTowerEt(j,event)
-        link = et + link; ntower += 1; total_towers += 1
+        link = et + link; ntower += 1; total_towers += 1; calo_towers += 1
         if options.debug:
           print getTowerEt(j,event),len(links),ntower,total_towers
           calo.Fill(iphi-0.5,ieta-0.5,int(et,2))
