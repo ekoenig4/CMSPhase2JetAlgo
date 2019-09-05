@@ -33,15 +33,15 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 #pragma HLS INTERFACE ap_ctrl_hs port=return
 
   // Initialize Arrays
-#pragma HLS ARRAY_PARTITION variable=tower3x3s complete dim=1
+// #pragma HLS ARRAY_PARTITION variable=tower3x3s complete dim=1
   for (int i = 0; i < M_3x3; i++) {
 #pragma HLS UNROLL
-    tower3x3s[i] = new Tower3x3;
+    tower3x3s[i] = Tower3x3();
   }
-#pragma HLS ARRAY_PARTITION variable=jets complete dim=1
-  for (int i = 0; i < M_JET; i++){
+  #pragma HLS ARRAY PARTITION variable=jets complete dim=1
+  for (int i = 0; i < M_JET; i++) {
 #pragma HLS UNROLL
-    jets[i] = new Jet;
+    jets[i] = Jet();
   }
   njets = 0;
 
@@ -53,11 +53,12 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
   getOverlapThirdPass(tower3x3s,jets,njets);
   // QuickSort(jets,njets);
 
-  for (int i = 0; i < njets; i++) {
-    Jet* jet = jets[i];
-    printf("Jet %i: (%i,%i,%i)\n",i+1,jet->iphi,jet->ieta,jet->ecal_et);
-    link_out[i].range(5,0) = ap_uint<6>(jet->iphi);
-    link_out[i].range(11,6) = ap_uint<6>(jet->ieta);
-    link_out[i].range(21,12) = ap_uint<10>(jet->ecal_et);
+  for (int i = 0; i < M_JET; i++) {
+    Jet& jet = jets[i];
+    if ( i >= njets ) continue;
+    printf("Jet %i: (%i,%i,%i)\n",i+1,jet.iphi,jet.ieta,jet.ecal_et);
+    link_out[i].range(5,0) = ap_uint<6>(jet.iphi);
+    link_out[i].range(11,6) = ap_uint<6>(jet.ieta);
+    link_out[i].range(21,12) = ap_uint<10>(jet.ecal_et);
   }
 }

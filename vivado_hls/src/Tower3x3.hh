@@ -1,7 +1,7 @@
 #ifndef TOWER3X3_HH
 #define TOWER3X3_HH
 
-class Jet;
+#include "JetInfo.hh"
 
 class Tower3x3 {
  public:
@@ -11,10 +11,10 @@ class Tower3x3 {
   int highest_ecal_et;
 
   int njets;
-  Jet* jetlist[4];
+  JetInfo jetlist[M_JET_OVR];
 
   Tower3x3() {
-    this->setSeed(0,0,0);
+    setSeed(0,0,0);
   }
   void setSeed(int iphi,int ieta,int ecal_et) {
     this->iphi = iphi;
@@ -27,7 +27,7 @@ class Tower3x3 {
     if ( ecal_et > highest_ecal_et ) highest_ecal_et = ecal_et;
     this->ecal_et += ecal_et;
   }
-  void addJet(Jet* jet) {
+  void addJet(JetInfo & jet) {
     jetlist[njets] = jet;
     njets++;
   }

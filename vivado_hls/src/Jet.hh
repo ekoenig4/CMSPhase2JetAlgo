@@ -1,21 +1,13 @@
 #ifndef JET_HH
 #define JET_HH
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <unistd.h>
+#include "Config.hh"
+#include "JetInfo.hh"
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <string>
-#include <bitset>
-#include "Tower3x3.hh"
-#include <stdio.h>
+const int M_JET_OVR = 4; // Maximum Number of Jets for Overlap
 
 class Jet {
- public:
+public:
   bool isSet;
   int ieta;
   int iphi;
@@ -29,39 +21,40 @@ class Jet {
     ecal_et = 0;
     highest_ecal_et = 0;
   }
-  void setSeed(Tower3x3* tower3x3) {
+  void setSeed(int iphi,int ieta,int ecal_et,int highest_ecal_et) {
     isSet = true;
-    iphi = tower3x3->iphi;
-    ieta = tower3x3->ieta;
-    ecal_et = tower3x3->ecal_et;
-    highest_ecal_et = tower3x3->highest_ecal_et;
+    this->iphi = iphi;
+    this->ieta = ieta;
+    this->ecal_et = ecal_et;
+    this->highest_ecal_et = highest_ecal_et;
   }
-  bool addCluster(Tower3x3* tower3x3,int dphi,int deta) {
+  bool addCluster(int dphi,int deta,int ecal_et,int highest_ecal_et) {
     if ( dphi > 0 || (dphi == 0 && deta > 0) )
-      if ( tower3x3->highest_ecal_et > highest_ecal_et )
+      if ( highest_ecal_et > this->highest_ecal_et )
 	return false;
     if ( dphi < 0 || (dphi == 0  && deta < 0) )
-      if ( tower3x3->highest_ecal_et >= highest_ecal_et )
+      if ( highest_ecal_et >= this->highest_ecal_et )
 	return false;
-    ecal_et += tower3x3->ecal_et;
-    // tower3x3->addJet(this);
+    this->ecal_et += ecal_et;
     return true;
   }
-  void checkOverlap(Tower3x3* tower3x3) {
-    // for (int ijet = 0; ijet < tower3x3->njets; ijet++) {
-    //   Jet* overlap = tower3x3->jetlist[ijet];
-    //   if ( !this->equal(overlap) ) {
-    // 	// printf("---Overlap Jet Found: (%i,%i,%i)\n",overlap->seed.iphi,overlap->seed.ieta,overlap->ecal_et);
-    // 	if ( this->ecal_et < overlap->ecal_et ) {
-    // 	  // printf("-----Removing Tower: (%i,%i,%i)\n",tower3x3->iphi,tower3x3->ieta,tower3x3->ecal_et);
-    // 	  this->ecal_et -= tower3x3->ecal_et;
-    // 	  return;
-    // 	} 
-    //   }
-    // }
+  void checkOverlap(JetInfo jetlist[M_JET_OVR],int njets, int ecal_et) {
+    for (int ijet = 0; ijet < M_JET_OVR; ijet++) {
+      if (ijet >= njets) continue;
+      JetInfo overlap = jetlist[ijet];
+      if ( !this->equal(overlap) ) {
+    	if (DEBUG_Ovl) printf("---Overlap Jet Found: (%i,%i,%i)\n",overlap.iphi,overlap.ieta,overlap.ecal_et);
+    	if ( this->ecal_et < overlap.ecal_et ) {
+    	  if (DEBUG_Ovl) printf("-----Removing Tower: (%i)\n",ecal_et);
+    	  this->ecal_et -= ecal_et;
+	  if (DEBUG_Ovl) printf("-------Result: (%i,%i,%i)\n",iphi,ieta,this->ecal_et);
+    	  return;
+    	} 
+      }
+    }
   }
-  bool equal(Jet* jet) {
-    return this->iphi == jet->iphi && this->ieta == jet->ieta;
+  bool equal(JetInfo jet) {
+    return this->iphi == jet.iphi && this->ieta == jet.ieta;
   }
 };
 #endif
