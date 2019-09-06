@@ -33,7 +33,7 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 #pragma HLS INTERFACE ap_ctrl_hs port=return
 
   // Initialize Arrays
-// #pragma HLS ARRAY_PARTITION variable=tower3x3s complete dim=1
+#pragma HLS ARRAY_PARTITION variable=tower3x3s complete dim=1
   for (int i = 0; i < M_3x3; i++) {
 #pragma HLS UNROLL
     tower3x3s[i] = Tower3x3();
