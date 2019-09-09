@@ -7,8 +7,8 @@ class Tower3x3 {
  public:
   int iphi;
   int ieta;
-  int ecal_et;
-  int highest_ecal_et;
+  int et;
+  int highest_et;
 
   int njets;
   JetInfo jetlist[M_JET_OVR];
@@ -16,16 +16,16 @@ class Tower3x3 {
   Tower3x3() {
     setSeed(0,0,0);
   }
-  void setSeed(int iphi,int ieta,int ecal_et) {
+  void setSeed(int iphi,int ieta,int et) {
     this->iphi = iphi;
     this->ieta = ieta;
-    this->ecal_et = ecal_et;
-    highest_ecal_et = ecal_et;
+    this->et = et;
+    highest_et = et;
     njets = 0;
   }
-  void addTower(int ecal_et) {
-    if ( ecal_et > highest_ecal_et ) highest_ecal_et = ecal_et;
-    this->ecal_et += ecal_et;
+  void addTower(int et) {
+    if ( et > highest_et ) highest_et = et;
+    this->et += et;
   }
   void addJet(JetInfo & jet) {
     jetlist[njets] = jet;

@@ -5,13 +5,13 @@ class JetInfo {
 public:
   int iphi;
   int ieta;
-  int ecal_et;
+  int et;
 
   JetInfo() {};
-  JetInfo(int & iphi,int & ieta,int & ecal_et) {
+  JetInfo(int iphi,int ieta,int et) {
     this->iphi = iphi;
     this->ieta = ieta;
-    this->ecal_et = ecal_et;
+    this->et = et;
   }
 };
 

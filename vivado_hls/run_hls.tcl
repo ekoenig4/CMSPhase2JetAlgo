@@ -2,11 +2,11 @@
 # https://github.com/hls-fpga-machine-learning/hls4ml
 
 array set opt {
-    csim   1
-    synth  1
-    cosim  1
-    export 1
-    tv test_random_set1
+    csim   0
+    synth  0
+    cosim  0
+    export 0
+    tv jetalgo_tv_0_0
 }
 
 foreach arg $::argv {
