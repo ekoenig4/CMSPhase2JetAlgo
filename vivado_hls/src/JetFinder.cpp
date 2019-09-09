@@ -93,11 +93,11 @@ void get9x9SecondPass(Tower3x3 tower3x3s[M_3x3],Jet jets[M_JET],int &njets) {
 	if (!valid) break;
       }
       if (valid) {
-	if ( jet.et > 0 ) {
-	  if (DEBUG_9x9) printf("Clustering Jet: (%i,%i,%i,%i)\n\n",jet.iphi,jet.ieta,jet.et,jet.highest_et);
-	  jets[njets] = jet;
-	  njets++;
-	}
+      	if ( jet.et > 0 ) {
+      	  if (DEBUG_9x9) printf("Clustering Jet: (%i,%i,%i,%i)\n\n",jet.iphi,jet.ieta,jet.et,jet.highest_et);
+      	  jets[njets] = jet;
+      	  njets++;
+      	}
       }
     }
   }

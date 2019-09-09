@@ -31,10 +31,10 @@ public:
   bool addCluster(int dphi,int deta,int et,int highest_et) {
     if ( dphi > 0 || (dphi == 0 && deta > 0) )
       if ( highest_et > this->highest_et )
-	return false;
+    	return false;
     if ( dphi < 0 || (dphi == 0  && deta < 0) )
       if ( highest_et >= this->highest_et )
-	return false;
+    	return false;
     this->et += et;
     return true;
   }
