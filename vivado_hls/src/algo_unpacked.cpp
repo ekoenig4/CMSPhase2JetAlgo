@@ -32,6 +32,9 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 #pragma HLS PIPELINE II=3
 #pragma HLS INTERFACE ap_ctrl_hs port=return
 
+  Tower3x3 tower3x3s[M_3x3];
+  Jet jets[M_3x3];
+ 
   // Initialize Arrays
 #pragma HLS ARRAY_PARTITION variable=tower3x3s complete dim=1
   for (int i = 0; i < M_3x3; i++) {
@@ -43,19 +46,18 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 #pragma HLS UNROLL
     jets[i] = Jet();
   }
-  njets = 0;
 
   // null algo specific pragma: avoid fully combinatorial algo by specifying min latency
   // otherwise algorithm clock input (ap_clk) gets optimized away
 #pragma HLS latency min=3
   get3x3FirstPass(link_in,tower3x3s);
-  get9x9SecondPass(tower3x3s,jets,njets);
-  getOverlapThirdPass(tower3x3s,jets,njets);
+  get9x9SecondPass(tower3x3s,jets);
+  // getOverlapThirdPass(tower3x3s,jets);
   // QuickSort(jets,njets);
 
   for (int i = 0; i < M_JET; i++) {
     Jet& jet = jets[i];
-    if ( i >= njets ) continue;
+    if ( !jet.isSet ) continue;
     printf("Jet %i: (%i,%i,%i)\n",i+1,jet.iphi,jet.ieta,jet.et);
     link_out[i].range(5,0) = ap_uint<6>(jet.iphi);
     link_out[i].range(11,6) = ap_uint<6>(jet.ieta);

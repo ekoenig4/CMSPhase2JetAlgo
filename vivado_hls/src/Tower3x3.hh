@@ -14,22 +14,21 @@ class Tower3x3 {
   JetInfo jetlist[M_JET_OVR];
 
   Tower3x3() {
-    setSeed(0,0,0);
-  }
-  void setSeed(int iphi,int ieta,int et) {
-    this->iphi = iphi;
-    this->ieta = ieta;
-    this->et = et;
-    highest_et = et;
+    iphi = 0;
+    ieta = 0;
+    et = 0;
+    highest_et = 0;
     njets = 0;
   }
+  // void setSeed(int iphi,int ieta,int et) {
+  // }
   void addTower(int et) {
     if ( et > highest_et ) highest_et = et;
     this->et += et;
   }
-  void addJet(JetInfo & jet) {
-    jetlist[njets] = jet;
-    njets++;
-  }
+  // void addJet(JetInfo & jet) {
+  //   jetlist[njets] = jet;
+  //   njets++;
+  // }
 };
 #endif
