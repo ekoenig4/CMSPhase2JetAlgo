@@ -4,3 +4,4 @@ vivado_hls.log
 .nfs*
 *_csim_out.txt
 nohup.out
+reports
