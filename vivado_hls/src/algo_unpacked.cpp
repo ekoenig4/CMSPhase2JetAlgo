@@ -67,17 +67,17 @@ void algo_unpacked(ap_uint<192> link_in[N_CH_IN], ap_uint<192> link_out[N_CH_OUT
 #pragma HLS latency min=3
   findJets(towers,jets);
 
- OutputWrite:for (int i = 0; i < M_JET; i++) {
-#pragma HLS UNROLL
-    Jet& jet = jets[i];
-    if ( !jet.isSet ) continue;
-    printf("Jet %i: (%i,%i,%i)\n",i+1,jet.iphi,jet.ieta,jet.et);
-    tmp_link_out[i].range(5,0) = ap_uint<6>(jet.iphi);
-    tmp_link_out[i].range(11,6) = ap_uint<6>(jet.ieta);
-    tmp_link_out[i].range(21,12) = ap_uint<10>(jet.et);
-  }
+//  OutputWrite:for (int i = 0; i < M_JET; i++) {
+// #pragma HLS UNROLL
+//     Jet& jet = jets[i];
+//     if ( !jet.isSet ) continue;
+//     // printf("Jet %i: (%i,%i,%i)\n",i,jet.iphi,jet.ieta,jet.et);
+//     tmp_link_out[i].range(5,0) = ap_uint<6>(jet.iphi);
+//     tmp_link_out[i].range(11,6) = ap_uint<6>(jet.ieta);
+//     tmp_link_out[i].range(21,12) = ap_uint<10>(jet.et);
+//   }
 
- OutputCopy:for(int i = 0; i < N_CH_OUT; i++){
-    link_out[i] = tmp_link_out[i];
-  }
+//  OutputCopy:for(int i = 0; i < N_CH_OUT; i++){
+//     link_out[i] = tmp_link_out[i];
+//   }
 }

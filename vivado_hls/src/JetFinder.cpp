@@ -3,8 +3,8 @@
 #include <iostream>
 #include <bitset>
 
-const int RING_3x3[9][2] = { {-1,1},{0,1},{1,1},
-			     {-1,0},{0,0},{1,0},
+const int RING_3x3[8][2] = { {-1,1},{0,1},{1,1},
+			     {-1,0},      {1,0},
 			     {-1,-1},{0,-1},{1,-1} };
 
 // void setJetSeed(Jet& jet,SuperTower& supertower) {
@@ -54,47 +54,6 @@ const int RING_3x3[9][2] = { {-1,1},{0,1},{1,1},
 //   }
 // }
 
-
-// void get9x9SecondPass(SuperTower supertowers[M_3x3],Jet jets[M_3x3]) {
-//   /**
-//      Loop through 3x3 Tower groups and build 9x9 Jets
-//   **/
-//   // printf("Starting 9x9 Second Pass\n");
-//   for (int ieta = 1; ieta <= M_ETA; ieta += 3) {
-// #pragma HLS UNROLL
-//     for (int iphi = 2; iphi <= M_PHI; iphi += 3) {
-// #pragma HLS UNROLL
-//       const int seed_index = getSuperTower(iphi,ieta);
-//       SuperTower& seed = supertowers[seed_index];
-//       if (seed.peak_et < M_ET) continue;
-//       Jet& jet = jets[seed_index];
-//       setJetSeed(jet,seed);
-//       // printf("Seeding Jet: (%i,%i,%i,%i)\n",jet.iphi,jet.ieta,jet.et,jet.peak_et);
-//       for (int r = 0; r < 8; r++) {
-// #pragma HLS UNROLL
-//       	int nphi = iphi + 3*RING_3x3[r][0];
-//       	int neta = ieta + 3*RING_3x3[r][1];
-//       	if ( (nphi <= 0 || nphi > M_PHI) || (neta <= 0 || neta > M_ETA) ) continue;
-// 	const int tower_index = getSuperTower(nphi,neta);
-// 	SuperTower& supertower = supertowers[ tower_index ];
-
-// 	// addCluster( jet,supertower,RING_3x3[r][0],RING_3x3[r][1] );
-// 	if ( RING_3x3[r][0] > 0 || (RING_3x3[r][0] == 0 && RING_3x3[r][1] > 0) ) {
-// 	  if ( supertower.peak_et > jet.peak_et )
-// 	    jet.isSet = false;
-// 	} else if ( RING_3x3[r][0] < 0 || (RING_3x3[r][0] == 0  && RING_3x3[r][1] < 0) ) {
-// 	  if ( supertower.peak_et >= jet.peak_et )
-// 	    jet.isSet = false;
-// 	} else {
-// 	  jet.et += supertower.et;
-// 	}
-// // 	// printf("---Adding Tower: (%i,%i,%i,%i) | valid %i\n",supertower.iphi,supertower.ieta,supertower.et,supertower.peak_et,valid);
-// 	if (!jet.isSet) break;
-//       }
-//     }
-//   }
-// }
-
 // void getOverlapThirdPass(SuperTower supertowers[M_3x3],Jet jets[M_3x3]) {
 //   // printf("Starting Overlap Third Pass | %i Total Jets\n",njets);
 //   for (int i = 0; i < M_3x3; i++) {
@@ -133,9 +92,13 @@ void get3x3FirstPass(Tower towers[M_TOWERS],SuperTower supertowers[M_SUPERS]) {
 #pragma HLS UNROLL
 
       int super_index = getSuperTower(iphi,ieta);
-      SuperTower supertower = supertowers[super_index];
-      printf("Getting SuperTower %i Center: (%i,%i)\n",super_index,iphi,ieta);
-    SetSuperTower:for (int r = 0; r < 9; r++) {
+      SuperTower& supertower = supertowers[super_index];
+      int seed_index = getTower(iphi,ieta);
+      Tower seed_tower = towers[seed_index];
+      supertower.et = seed_tower.et;
+      supertower.peak_et = seed_tower.et;
+      // printf("Getting SuperTower %i Center: (%i,%i)\n",super_index,iphi,ieta);
+    SetSuperTower:for (int r = 0; r < 8; r++) {
 	int nphi = iphi + RING_3x3[r][0];
 	int neta = ieta + RING_3x3[r][1];
 
@@ -147,6 +110,59 @@ void get3x3FirstPass(Tower towers[M_TOWERS],SuperTower supertowers[M_SUPERS]) {
 	supertower.et += tower.et;
 	if (tower.et > supertower.peak_et) supertower.peak_et = tower.et;
       }
+    }
+  }
+}
+
+
+void get9x9SecondPass(SuperTower supertowers[M_SUPERS],Jet jets[M_JET]) {
+#pragma HLS PIPELINE II=3
+#pragma HLS ARRAY PARTITION variable=supertowers complete dim=0
+#pragma HLS ARRAY PARTITION variable=jets complete dim=0
+
+ SecondPass:for (int iphi = 2; iphi <= M_PHI; iphi += 3) {
+#pragma HLS UNROLL
+
+  EtaSlice9x9:for(int ieta = 1; ieta <= M_ETA; ieta += 3) {
+      #pragma HLS UNROLL
+
+      int seed_index = getSuperTower(iphi,ieta);
+      SuperTower& seed_tower = supertowers[seed_index];
+      // printf("Seeding %i Jet: (%i,%i,%i,%i)\n",seed_index,iphi,ieta,seed_tower.et,seed_tower.peak_et);
+      if (seed_tower.peak_et < M_ET) continue;
+      Jet& jet = jets[seed_index];
+      jet.isSet = true;
+      jet.iphi = iphi;
+      jet.ieta = ieta;
+      jet.et = seed_tower.et;
+      jet.peak_et = seed_tower.peak_et;
+
+    SetJet:for(int r = 0; r < 8; r++) {
+#pragma HLS UNROLL
+	int dphi = 3*RING_3x3[r][0];
+	int deta = 3*RING_3x3[r][1];
+	int nphi = iphi + dphi;
+	int neta = ieta + deta;
+
+	if ( nphi <= 0 || nphi > M_PHI ) continue;
+	if ( neta <= 0 || neta > M_ETA ) continue;
+	int index = getSuperTower(nphi,neta);
+	SuperTower tower = supertowers[index];
+	// printf("Checking %i Tower: (%i,%i,%i,%i): ",index,nphi,neta,tower.et,tower.peak_et);
+	if ( dphi > 0 || ( dphi == 0 && deta > 0) )
+	  if ( tower.peak_et > jet.peak_et ) {
+	    jet.isSet = false;
+	    break;
+	  }
+	if ( dphi < 0 || ( dphi == 0 && deta < 0) )
+	  if ( tower.peak_et >= jet.peak_et ) {
+	    jet.isSet = false;
+	    break;
+	  }
+	// printf("valid\n");
+	jet.et += tower.et;
+      }
+      // if (!jet.isSet) printf("skip\n");
     }
   }
 }
@@ -164,4 +180,5 @@ void findJets(Tower towers[M_TOWERS],Jet jets[M_JET]) {
     supertowers[i].peak_et = 0;
   }
   get3x3FirstPass(towers,supertowers);
+  get9x9SecondPass(supertowers,jets);
 }
