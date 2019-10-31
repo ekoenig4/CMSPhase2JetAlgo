@@ -25,11 +25,11 @@ for input in tv.data:
         if info == 0: continue
         if type == 'towers':
             iphi,ieta = getTowerPos(id)
-            et = info * 0.25
+            et = info
         if type == 'jets':
             iphi = info['phi']
             ieta = info['eta']
-            et = info['et'] * 0.25
+            et = info['et']
         x_list.append(iphi - 0.5)
         y_list.append(ieta - 0.5)
         weights.append(et)

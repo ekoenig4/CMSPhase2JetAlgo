@@ -4,6 +4,8 @@ set_top algo_unpacked
 #### Add source code
 add_files src/algo_unpacked.cpp
 add_files src/JetFinder.cpp
+add_files src/FirstPass.cpp
+add_files src/SecondPass.cpp
 # add_files src/QuickSort.cpp
 #
 ### Add testbed files

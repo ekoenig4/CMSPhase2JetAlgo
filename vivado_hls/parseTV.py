@@ -7,7 +7,7 @@ def JetAlgoparseINP(input,data):
     """
     Nt = 816 # Set total number of towers in card
     tpl = 18 # Number of towers per link
-    etunit = 0.25 # GeV
+    etunit = 1 # GeV
     fname = input.replace('data/','')
     links = []
     with open(input,'r') as f:
